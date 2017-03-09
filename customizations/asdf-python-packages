@@ -1,0 +1,6 @@
+pipenv
+flake8
+autopep8
+pylint
+python-language-server
+pynvim
