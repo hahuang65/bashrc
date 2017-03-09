@@ -1,0 +1,17 @@
+# Alias
+alias reload="source ~/.dotfiles/shell/bash/bash_profile"
+alias hs="history | grep --color=auto"
+
+# Bash
+alias ..="cd .. && ls"
+alias lsa="ls -laGh"
+
+alias psr="ps auxr | head -n 11"
+alias psm="ps auxm | head -n 11"
+
+
+# Git
+alias gl="tig"
+if [ -x "$(command -v hub)" ]; then
+  alias git=hub
+fi
