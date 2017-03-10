@@ -4,6 +4,7 @@ alias hs="history | grep --color=auto"
 
 # Bash
 alias ..="cd .. && ls"
+alias ls="ls --color=auto"
 alias lsa="ls -laGh"
 
 alias psr="ps auxr | head -n 11"

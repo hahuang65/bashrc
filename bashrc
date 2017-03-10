@@ -1,4 +1,4 @@
-export PATH="/usr/local/bin:/usr/local/sbin:$HOME/.scripts:$HOME/.scripts/Fontpatcher:$HOME/.scripts/Geektool:$HOME/Documents/Projects/toolbox:$HOME/.rvm/bin:$PATH"
+export PATH="/usr/local/opt/coreutils/libexec/gnubin:/usr/local/bin:/usr/local/sbin:$HOME/.scripts:$HOME/.scripts/Fontpatcher:$HOME/.scripts/Geektool:$HOME/Documents/Projects/toolbox:$HOME/.rvm/bin:$PATH"
 
 export EDITOR="nvim"
 export VISUAL="nvim"
