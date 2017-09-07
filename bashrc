@@ -8,10 +8,10 @@ export NODE_PATH="/usr/local/lib/node"
 export HOMEBREW_CASK_OPTS="--caskroom=/usr/local/Caskroom"
 
 # Source  secret stuff
-test -e "$HOME/.dotfiles/shell/secrets.sh" && source "$HOME/.dotfiles/shell/secrets.sh"
+test -e "$HOME/.secrets.sh" && source "$HOME/.secrets.sh"
 
-source $HOME/.dotfiles/shell/bash/aliases
-for file in $HOME/.dotfiles/shell/sh/functions/*.sh; do source $file; done
-for file in $HOME/.dotfiles/shell/sh/customizations/*.sh; do source $file; done
-for file in $HOME/.dotfiles/shell/bash/customizations/*.bash; do source $file; done
-for file in $HOME/.dotfiles/shell/bash/functions/*.bash; do source $file; done
+source $HOME/.dotfiles/bash/aliases
+for file in $HOME/.dotfiles/sh/functions/*.sh; do source $file; done
+for file in $HOME/.dotfiles/sh/customizations/*.sh; do source $file; done
+for file in $HOME/.dotfiles/bash/customizations/*.bash; do source $file; done
+for file in $HOME/.dotfiles/bash/functions/*.bash; do source $file; done
