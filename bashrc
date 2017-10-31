@@ -4,9 +4,6 @@ export EDITOR="nvim"
 export VISUAL="nvim"
 export NODE_PATH="/usr/local/lib/node"
 
-# Homebrew Cask
-export HOMEBREW_CASK_OPTS="--caskroom=/usr/local/Caskroom"
-
 # Source  secret stuff
 test -e "$HOME/.secrets.sh" && source "$HOME/.secrets.sh"
 
