@@ -1,7 +1,7 @@
 export PATH="/usr/local/opt/coreutils/libexec/gnubin:/usr/local/bin:/usr/local/sbin:$HOME/.scripts:$HOME/.scripts/Fontpatcher:$HOME/.scripts/Geektool:$HOME/Documents/Projects/toolbox:$HOME/.rvm/bin:$PATH"
 
-export EDITOR="nvim"
-export VISUAL="nvim"
+export EDITOR="vim"
+export VISUAL="vim"
 export NODE_PATH="/usr/local/lib/node"
 
 # Source  secret stuff
