@@ -6,6 +6,7 @@ export NODE_PATH="/usr/local/lib/node"
 
 # Source  secret stuff
 test -e "$HOME/.secrets.sh" && source "$HOME/.secrets.sh"
+test -e "$HOME/.`uname`.sh" && source "$HOME/.`uname`.sh"
 
 source $HOME/.dotfiles/bash/aliases
 for file in $HOME/.dotfiles/sh/functions/*.sh; do source $file; done
