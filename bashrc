@@ -10,7 +10,5 @@ OS=`uname | tr '[:upper:]' '[:lower:]'`
 test -e "$HOME/.$OS.sh" && source "$HOME/.$OS.sh"
 
 source $HOME/.dotfiles/bash/aliases
-for file in $HOME/.dotfiles/sh/functions/*.sh; do source $file; done
-for file in $HOME/.dotfiles/sh/customizations/*.sh; do source $file; done
 for file in $HOME/.dotfiles/bash/customizations/*.bash; do source $file; done
 for file in $HOME/.dotfiles/bash/functions/*.bash; do source $file; done
