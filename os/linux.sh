@@ -3,3 +3,5 @@ if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
 fi
 
 eval $(keychain --eval --quiet id_rsa)
+
+xset r rate 200 50
