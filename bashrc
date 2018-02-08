@@ -1,4 +1,4 @@
-export PATH="/usr/local/bin:/usr/local/sbin:$HOME/.scripts:$HOME/Documents/Projects/toolbox:$HOME/.rvm/bin:$PATH"
+export PATH="$HOME/.rbenv/shims:/usr/local/bin:/usr/local/sbin:$HOME/.scripts:$HOME/Documents/Projects/toolbox:$PATH"
 
 export EDITOR="vim"
 export VISUAL="vim"
