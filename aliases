@@ -1,11 +1,2 @@
-# Alias
-alias reload="source ${HOME}/.bash_profile"
 alias hs="history | grep --color=auto"
-
-# Bash
 alias ls="ls --color=auto"
-
-# Git
-if [ -x "$(command -v hub)" ]; then
-  alias git=hub
-fi
