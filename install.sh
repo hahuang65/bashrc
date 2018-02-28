@@ -1,0 +1,4 @@
+#!/bin/sh
+
+ln -sf "${PWD}/bashrc" "${HOME}/.bashrc"
+ln -sf "${PWD}/bash_profile" "${HOME}/.bash_profile"
