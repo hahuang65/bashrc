@@ -4,5 +4,5 @@ fi
 
 eval $(keychain --eval --quiet id_rsa)
 
-export BROWSER=google-chrome-stable
+export BROWSER=chromium
 export QT_AUTO_SCREEN_SCALE_FACTOR=0
