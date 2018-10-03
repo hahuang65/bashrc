@@ -1,5 +1,8 @@
 export PATH="$HOME/.rbenv/shims:$PATH:$HOME/.scripts:$HOME/Documents/Projects/a5/toolbox"
-eval "$(pyenv init -)"
+
+if hash pyenv 2> /dev/null; then
+  eval "$(pyenv init -)"
+fi
 
 # Source  secret stuff
 test -e "$HOME/.secrets.sh" && source "$HOME/.secrets.sh"
