@@ -1,4 +1,4 @@
-export PATH="$HOME/.rbenv/shims:$PATH:$HOME/.scripts:$HOME/Documents/Projects/a5/toolbox"
+export PATH="$HOME/.rbenv/shims:$PATH:$HOME/.scripts:$HOME/.cargo/bin:$HOME/Documents/Projects/a5/toolbox"
 
 if hash pyenv 2> /dev/null; then
   eval "$(pyenv init -)"
