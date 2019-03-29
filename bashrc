@@ -1,4 +1,4 @@
-export PATH="$HOME/.rbenv/shims:$PATH:$HOME/.scripts:$HOME/.cargo/bin:$HOME/Documents/Projects/a5/toolbox"
+export PATH="$HOME/.rbenv/shims:$PATH:$HOME/.exenv/bin:$HOME/.scripts:$HOME/.cargo/bin:$HOME/Documents/Projects/a5/toolbox"
 
 # Source  secret stuff
 test -e "$HOME/.secrets.sh" && source "$HOME/.secrets.sh"
