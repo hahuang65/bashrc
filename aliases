@@ -1,2 +1,14 @@
 alias hs="history | grep --color=auto"
 alias ls="ls --color=auto"
+
+# To use default commands, either pre-face it with a `\`, or use `command`:
+# $ \cat
+# $ command cat
+
+alias cat="bat"
+alias du="ncdu --color dark -rr -x --exclude .git --exclude node_modules"
+alias find="fd"
+alias man="tldr"
+alias ping="prettyping --nolegend"
+alias top="htop"
+alias which="type"
