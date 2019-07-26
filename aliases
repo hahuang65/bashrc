@@ -7,7 +7,6 @@ alias ls="ls --color=auto"
 
 alias cat="bat"
 alias du="ncdu --color dark -rr -x --exclude .git --exclude node_modules"
-alias find="fd"
 alias man="tldr"
 alias ping="prettyping --nolegend"
 alias top="htop"
