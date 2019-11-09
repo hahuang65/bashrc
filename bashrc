@@ -1,5 +1,4 @@
-export PATH="$HOME/.rbenv/shims:$HOME/.pyenv/shims:$HOME/.scripts:$HOME/.node_modules/bin:$PATH"
-export npm_config_prefix=~/.node_modules
+export PATH="$HOME/.rbenv/shims:$HOME/.pyenv/shims:$HOME/.scripts:$PATH"
 
 # Source  secret stuff
 test -e "$HOME/.secrets.sh" && source "$HOME/.secrets.sh"
