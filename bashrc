@@ -1,4 +1,4 @@
-export PATH="$HOME/.rbenv/shims:$HOME/.pyenv/shims:$HOME/.scripts:$PATH"
+export PATH="$HOME/.scripts:$PATH"
 
 # Source  secret stuff
 test -e "$HOME/.secrets.sh" && source "$HOME/.secrets.sh"
