@@ -1,3 +1,3 @@
 function diff {
-  git diff --no-index --color "$@" | diff-so-fancy | less --tabs=4 -RFX
+  command diff -u "$@" | diff-so-fancy | less --tabs=4 -RFX
 }
