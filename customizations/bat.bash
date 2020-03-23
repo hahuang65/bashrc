@@ -9,7 +9,7 @@ if hash bat 2> /dev/null; then
   if hash batman 2> /dev/null; then
     alias man="batman"
   else
-    export MANPAGER="sh -c 'col --no-backspaces --spaces | bat --language man --plain'"
+    export MANPAGER="sh -c 'col -bx | bat --language man --plain'"
   fi
 
   if hash batgrep 2> /dev/null; then
