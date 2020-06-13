@@ -1,4 +1,5 @@
 export PATH="$HOME/.scripts:$PATH"
+export GOPATH="$HOME/.go"
 
 # Source  secret stuff
 test -e "$HOME/.secrets.sh" && source "$HOME/.secrets.sh"
