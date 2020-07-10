@@ -1,4 +1,4 @@
-export PATH="$HOME/.scripts:$PATH"
+export PATH="$HOME/.scripts:$HOME/.local/bin:$PATH"
 export GOPATH="$HOME/.go"
 
 # Source  secret stuff
