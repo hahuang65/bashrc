@@ -1,6 +1,7 @@
 alias hs="history | grep --color=auto"
 alias ls="ls --color=auto"
 alias which="type"
+alias vim=nvim
 
 if hash prettyping 2> /dev/null; then
   alias ping="prettyping --nolegend"
