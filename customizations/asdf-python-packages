@@ -1,1 +1,4 @@
 pipenv
+flake8
+autopep8
+pylint
