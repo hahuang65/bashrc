@@ -9,10 +9,10 @@ if hash prettyping 2> /dev/null; then
   alias ping="prettyping --nolegend"
 fi
 
-if hash bashtop 2> /dev/null; then
-  alias top="bashtop"
-elif hash ytop 2> /dev/null; then
-  alias top="ytop"
+if hash btm 2> /dev/null; then
+  alias top="btm"
+elif hash bpytop 2> /dev/null; then
+  alias top="bpytop"
 elif hash htop 2> /dev/null; then
   alias top="htop"
 fi
