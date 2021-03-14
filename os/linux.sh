@@ -1,5 +1,5 @@
-if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
-  exec startx
+if [ -z $DISPLAY ] && [ "$(tty)" == "/dev/tty1" ]; then
+  exec sway
 fi
 
 eval $(keychain --eval --quiet id_rsa)
