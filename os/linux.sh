@@ -4,5 +4,7 @@ fi
 
 eval $(keychain --eval --noask --quiet id_rsa)
 
+alias open="xdg-open"
+
 export BROWSER=firefox
 export PATH="$HOME/.local/bin:$PATH"
