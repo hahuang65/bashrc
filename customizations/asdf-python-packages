@@ -1,6 +1,7 @@
 pipenv
 flake8
 autopep8
+goobook
 pylint
 python-language-server
 pynvim
