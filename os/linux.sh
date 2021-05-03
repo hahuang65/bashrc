@@ -6,5 +6,5 @@ eval $(keychain --eval --noask --quiet id_rsa)
 
 alias open="xdg-open"
 
-export BROWSER=firefox
+export BROWSER=google-chrome
 export PATH="$HOME/.local/bin:$PATH"
