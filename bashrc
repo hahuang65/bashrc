@@ -1,5 +1,5 @@
-export PATH="$HOME/.scripts:$HOME/.local/bin:$HOME/.emacs.d/bin:$PATH"
 export GOPATH="$HOME/.go"
+export PATH="$HOME/.scripts:$HOME/.local/bin:$HOME/.emacs.d/bin:$GOPATH/bin:$PATH"
 
 # Source  secret stuff
 test -e "$HOME/.secrets.sh" && source "$HOME/.secrets.sh"
