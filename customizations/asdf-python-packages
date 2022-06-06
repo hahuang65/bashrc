@@ -1,6 +1,7 @@
-pipenv
-flake8
 autopep8
+debugpy
+flake8
 goobook
+pipenv
 pylint
 pynvim
