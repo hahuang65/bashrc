@@ -1,3 +1,5 @@
+svelte
+svelte-language-server
 typescript
 typescript-language-server
-vue
+typescript-svelte-plugin
