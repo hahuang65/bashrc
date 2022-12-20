@@ -1,6 +1,3 @@
 svelte
-svelte-language-server
 typescript
-typescript-language-server
 typescript-svelte-plugin
-vls
