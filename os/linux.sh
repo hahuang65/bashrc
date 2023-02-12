@@ -1,5 +1,15 @@
-if [ -z $DISPLAY ] && [ "$(tty)" == "/dev/tty1" ]; then
-  exec sway
+if [ -z "$DISPLAY" ] && [ "$(tty)" == "/dev/tty1" ]; then
+	if test -f "$HOME/.dotfiles/hyprland/wrappedhl"; then
+		if command -v Hyprland; then
+			exec wrappedhl
+		else
+			echo "Hyprland is not installed."
+		fi
+	elif command -v sway; then
+		exec sway
+	else
+		echo "No configured WM/DMs installed"
+	fi
 fi
 
 # Removing, in favor of using 1Password's ssh agent
