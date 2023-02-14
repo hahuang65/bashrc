@@ -1,7 +1,7 @@
 if [ -z "$DISPLAY" ] && [ "$(tty)" == "/dev/tty1" ]; then
 	if test -f "$HOME/.dotfiles/hyprland/wrappedhl"; then
 		if command -v Hyprland; then
-			exec wrappedhl
+			exec "$HOME/.dotfiles/hyprland/wrappedhl"
 		else
 			echo "Hyprland is not installed."
 		fi
