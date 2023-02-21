@@ -1,12 +1,8 @@
 if [ -z "$DISPLAY" ] && [ "$(tty)" == "/dev/tty1" ]; then
 	if command -v sway; then
-		exec sway --unsupported-gpu
-	elif test -f "$HOME/.dotfiles/hyprland/wrappedhl"; then
-		if command -v Hyprland; then
-			exec "$HOME/.dotfiles/hyprland/wrappedhl"
-		else
-			echo "Hyprland is not installed."
-		fi
+		exec "$HOME/.dotfiles/sway/launch-sway"
+	elif command -v Hyprland; then
+		exec "$HOME/.dotfiles/hyprland/launch-hyprland"
 	else
 		echo "No configured WM/DMs installed"
 	fi
