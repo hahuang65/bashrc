@@ -1,3 +1,7 @@
-export GREP_OPTIONS='--color=auto' GREP_COLOR='mt=1;32'
-alias grep="grep $GREP_OPTIONS"
-unset GREP_OPTIONS
+if [ "$(uname)" = "Linux" ]; then
+	export GREP_COLOR='mt=1;32'
+elif [ "$(uname)" = "Darwin" ]; then
+	export GREP_COLOR='1;32'
+fi
+
+alias grep='grep --color=auto'
