@@ -5,4 +5,3 @@ rubocop-rails
 rubocop-performance
 rubocop-rspec
 rubocop-faker
-ruby-debug-base
