@@ -1,0 +1,8 @@
+bundler
+solargraph
+rubocop
+rubocop-rails
+rubocop-performance
+rubocop-rspec
+rubocop-faker
+ruby-debug

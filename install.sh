@@ -7,3 +7,5 @@ ln -sf "${PWD}/bash_profile" "${HOME}/.bash_profile"
 ln -sf "${PWD}/customizations/asdf-python-packages" "${HOME}/.default-python-packages"
 # This just sets up some default NodeJS packages to be installed with asdf-nodejs (https://github.com/asdf-vm/asdf-nodejs)
 ln -sf "${PWD}/customizations/asdf-nodejs-packages" "${HOME}/.default-npm-packages"
+# This just sets up some default Ruby gems to be installed with asdf-ruby (https://github.com/asdf-vm/asdf-ruby)
+ln -sf "${PWD}/customizations/asdf-ruby-gems" "${HOME}/.default-gems"
