@@ -1,4 +1,5 @@
 bundler
+neovim
 solargraph
 rubocop
 rubocop-rails
