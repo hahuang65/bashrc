@@ -1,3 +1,9 @@
+if [ "$(uname)" = "Linux" ]; then
+	[[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
+elif [ "$(uname)" = "Darwin" ]; then
+	[[ $PS1 && -f /usr/local/etc/bash_completion ]] && . /usr/local/etc/bash_completion
+fi
+
 # Case-insensitive completions
 bind "set completion-ignore-case on"
 
