@@ -4,11 +4,14 @@ elif [ "$(uname)" = "Darwin" ]; then
 	[[ $PS1 && -f /usr/local/etc/bash_completion ]] && . /usr/local/etc/bash_completion
 fi
 
-# Case-insensitive completions
-bind "set completion-ignore-case on"
+# Only if the shell is interactive
+if [[ $- == *i* ]]; then
+	# Case-insensitive completions
+	bind "set completion-ignore-case on"
 
-# Treat - and _ as equivalent for completions
-bind "set completion-map-case on"
+	# Treat - and _ as equivalent for completions
+	bind "set completion-map-case on"
 
-# Show ambiguous matches with single tab instead of double
-bind "set show-all-if-ambiguous on"
+	# Show ambiguous matches with single tab instead of double
+	bind "set show-all-if-ambiguous on"
+fi

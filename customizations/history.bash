@@ -1,6 +1,8 @@
-# Completes history expansion
-# e.g. typing `!!<space>` will replace it with the last command
-bind Space:magic-space
+if [[ $- == *i* ]]; then
+	# Completes history expansion
+	# e.g. typing `!!<space>` will replace it with the last command
+	bind Space:magic-space
+fi
 
 # Don't clobber history, just append to it
 # To be clear, this only helps when using multiple shells in parallel
