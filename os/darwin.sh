@@ -1,7 +1,7 @@
 export PATH="$PATH:$HOME/Documents/Projects/a5/toolbox:$HOME/Documents/Projects/a5/dockerfiles/scripts"
 
 # Homebrew paths
-export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/opt/findutils/libexec/gnubin:$PATH:/opt/homebrew/sbin:/opt/homebrew/bin"
+export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/opt/findutils/libexec/gnubin:/opt/homebrew/sbin:/opt/homebrew/bin:$PATH"
 
 alias restart_bt='sudo pkill bluetoothd'
 
