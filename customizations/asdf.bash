@@ -2,9 +2,11 @@
 unset ASDF_DIR
 
 if test -f /opt/asdf-vm/asdf.sh; then
-  . /opt/asdf-vm/asdf.sh
-elif test -f /usr/local/opt/asdf/asdf.sh; then
-  . /usr/local/opt/asdf/asdf.sh
-elif test -f /usr/local/opt/asdf/libexec/asdf.sh; then
-  . /usr/local/opt/asdf/libexec/asdf.sh
+	. /opt/asdf-vm/asdf.sh
+elif hash brew 2>/dev/null; then
+	if test -f "$(brew --prefix)/opt/asdf/asdf.sh"; then
+		. "$(brew --prefix)/opt/asdf/asdf.sh"
+	elif test -f "$(brew --prefix)/opt/asdf/libexec/asdf.sh"; then
+		. "$(brew --prefix)/opt/asdf/libexec/asdf.sh"
+	fi
 fi

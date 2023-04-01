@@ -1,4 +1,9 @@
-export PATH="/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:$PATH:/usr/local/sbin:/usr/local/bin:$HOME/Documents/Projects/a5/toolbox:$HOME/Documents/Projects/a5/dockerfiles/scripts"
+export PATH="$PATH:$HOME/Documents/Projects/a5/toolbox:$HOME/Documents/Projects/a5/dockerfiles/scripts"
+
+if hash brew 2>/dev/null; then
+	export PATH="$(brew --prefix)/opt/coreutils/libexec/gnubin:$(brew --prefix)/opt/findutils/libexec/gnubin:$PATH:$(brew --prefix)/sbin:$(brew --prefix)/bin"
+fi
+
 alias restart_bt='sudo pkill bluetoothd'
 
 # Use 1Password's ssh agent

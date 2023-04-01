@@ -1,7 +1,9 @@
 if [ "$(uname)" = "Linux" ]; then
 	[[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
 elif [ "$(uname)" = "Darwin" ]; then
-	[[ $PS1 && -f /usr/local/etc/bash_completion ]] && . /usr/local/etc/bash_completion
+	if hash brew 2>/dev/null; then
+		[[ $PS1 && -f "$(brew --prefix)/etc/bash_completion" ]] && . "$(brew --prefix)/etc/bash_completion"
+	fi
 fi
 
 # Only if the shell is interactive
