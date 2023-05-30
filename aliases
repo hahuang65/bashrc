@@ -1,6 +1,5 @@
 alias hs="history | grep --color=auto"
 alias ls="ls --color=auto"
-alias which="type"
 alias mv="mv --interactive --verbose"
 alias cp="cp --interactive --verbose --recursive"
 alias mkdir="mkdir --verbose --parents"
