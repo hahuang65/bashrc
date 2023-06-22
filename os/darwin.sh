@@ -1,4 +1,5 @@
-export PATH="$PATH:$HOME/Documents/Projects/a5/toolbox:$HOME/Documents/Projects/a5/dockerfiles/scripts"
+# A5 paths
+export PATH="$PATH:$HOME/Documents/Projects/a5/toolbox"
 
 # Homebrew paths
 export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/opt/findutils/libexec/gnubin:/opt/homebrew/sbin:/opt/homebrew/bin:$PATH"
