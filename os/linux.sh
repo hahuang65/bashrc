@@ -20,5 +20,5 @@ export SSH_AUTH_SOCK=~/.1password/agent.sock
 
 alias open="xdg-open"
 
-export BROWSER=firefox
+export BROWSER=vivaldi
 export PATH="$HOME/.local/bin:$PATH"
