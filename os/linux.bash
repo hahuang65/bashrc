@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 if [ -z "$DISPLAY" ] && [ "$(tty)" == "/dev/tty1" ]; then
   if command -v sway >/dev/null 2>&1; then
     if pacman -Qi nvidia >/dev/null; then

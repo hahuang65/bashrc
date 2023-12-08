@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 if [ "$(uname)" = "Linux" ]; then
   [[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
 elif [ "$(uname)" = "Darwin" ]; then

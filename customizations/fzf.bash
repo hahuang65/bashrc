@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 if [ "$(uname)" = "Linux" ]; then
   source "/usr/share/fzf/completion.bash"
   source "/usr/share/fzf/key-bindings.bash"

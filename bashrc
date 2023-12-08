@@ -12,7 +12,7 @@ BASHRC_DIR=${BASHRC%/*}
 
 # Source OS-specific stuff
 OS=$(uname | tr '[:upper:]' '[:lower:]')
-test -e "$BASHRC_DIR/os/$OS.sh" && source "$BASHRC_DIR/os/$OS.sh"
+test -e "$BASHRC_DIR/os/$OS.bash" && source "$BASHRC_DIR/os/$OS.bash"
 
 if test -e "$HOME/.dotfiles"; then
   source "$BASHRC_DIR"/aliases

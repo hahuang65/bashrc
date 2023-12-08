@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # A5 paths
 export PATH="$PATH:$HOME/Documents/Projects/a5/toolbox"
 
