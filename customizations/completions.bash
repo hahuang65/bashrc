@@ -3,11 +3,11 @@
 if [ "$(uname)" = "Linux" ]; then
   [[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
 # Sourcing this is really slow, commenting out to see if I really use it
-# elif [ "$(uname)" = "Darwin" ]; then
-#   if hash brew 2>/dev/null; then
-#     # $(brew --prefix) is slow, hard-coding /opt/homebrew instead.
-#     [[ $PS1 && -f "/opt/homebrew/etc/bash_completion" ]] && . "/opt/homebrew/etc/bash_completion"
-#   fi
+elif [ "$(uname)" = "Darwin" ]; then
+  if hash brew 2>/dev/null; then
+    # $(brew --prefix) is slow, hard-coding /opt/homebrew instead.
+    [[ $PS1 && -f "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+  fi
 fi
 
 # AWS completion
