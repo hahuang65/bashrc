@@ -5,7 +5,7 @@ if [ "$(uname)" = "Linux" ]; then
 elif [ "$(uname)" = "Darwin" ]; then
   if hash brew 2>/dev/null; then
     # $(brew --prefix) is slow, hard-coding /opt/homebrew instead.
-    [[ $PS1 && -f "opt/homebrew/etc/bash_completion" ]] && . "opt/homebrew/etc/bash_completion"
+    [[ $PS1 && -f "/opt/homebrew/etc/bash_completion" ]] && . "/opt/homebrew/etc/bash_completion"
   fi
 fi
 
