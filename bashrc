@@ -5,7 +5,7 @@ export PATH="$HOME/.scripts:$HOME/.local/bin:$GOPATH/bin:$PATH"
 
 source_file() {
   if [[ $BENCHMARK == 1 ]]; then
-    TIMEFORMAT="$(basename "$(dirname "$1")")/$(basename "$1"): %Rs"
+    TIMEFORMAT="$1: %Rs"
     time . "$1"
     unset TIMEFORMAT
   else
