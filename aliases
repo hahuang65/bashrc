@@ -44,3 +44,7 @@ fi
 if hash dog 2>/dev/null; then
   alias dig="dog"
 fi
+
+if hash curlie 2>/dev/null; then
+  alias curl="curlie"
+fi
