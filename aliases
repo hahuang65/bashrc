@@ -1,32 +1,46 @@
+#!/usr/bin/env bash
+
 alias hs="history | grep --color=auto"
 alias ls="ls --color=auto"
 alias mv="mv --interactive --verbose"
 alias cp="cp --interactive --verbose --recursive"
 alias mkdir="mkdir --verbose --parents"
 
-if hash prettyping 2> /dev/null; then
+if hash prettyping 2>/dev/null; then
   alias ping="prettyping --nolegend"
 fi
 
-if hash btm 2> /dev/null; then
+if hash btm 2>/dev/null; then
   alias top="btm"
-elif hash bpytop 2> /dev/null; then
+elif hash bpytop 2>/dev/null; then
   alias top="bpytop"
-elif hash htop 2> /dev/null; then
+elif hash htop 2>/dev/null; then
   alias top="htop"
 fi
 
-if hash bat 2> /dev/null; then
+if hash bat 2>/dev/null; then
   alias cat="bat"
 
-  if hash batman 2> /dev/null; then
+  if hash batman 2>/dev/null; then
     alias man="batman"
   else
     export MANPAGER="sh -c 'col -bx | bat --language man --plain --pager=\"less --raw-control-chars\"'"
     export MANROFFOPT="-c"
   fi
 
-  if hash batgrep 2> /dev/null; then
+  if hash batgrep 2>/dev/null; then
     alias rg="batgrep"
   fi
+fi
+
+if hash hwatch 2>/dev/null; then
+  alias watch="hwatch"
+fi
+
+if hash ov 2>/dev/null; then
+  alias less="ov"
+fi
+
+if hash dog 2>/dev/null; then
+  alias dig="dog"
 fi
