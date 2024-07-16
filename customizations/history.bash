@@ -7,9 +7,9 @@ if [[ $- == *i* ]]; then
 fi
 
 # Don't clobber history, just append to it
-# To be clear, this only helps when using multiple shells in parallel
-# Since history is written on shell exit and each shell is only aware of it's own history
 shopt -s histappend
+# Immediately append to history instead of waiting on session end
+export PROMPT_COMMAND='history -a'
 
 # Save multi-line commands as a single command
 shopt -s cmdhist
@@ -21,5 +21,8 @@ HISTFILESIZE=100000
 # Ignore duplicates in history
 HISTCONTROL=ignoreboth:erasedups
 
+# Have timestamps for history
+export HISTTIMEFORMAT='%F %T - '
+
 # Don't record some commands in history
-export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
+export HISTIGNORE="clear:history:[bf]g:exit:date:* --help"
