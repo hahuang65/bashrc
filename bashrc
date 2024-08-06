@@ -36,6 +36,7 @@ initialize() {
     source_file "$BASHRC_DIR"/aliases
     source_dir "$BASHRC_DIR/customizations/*.bash"
     source_dir "$BASHRC_DIR/functions/*.bash"
+    source_file "$BASHRC_DIR/customizations/direnv.bash" # Has to happen after all other prompt manipulations
   fi
 
   # Remove duplicate entries in PATH
