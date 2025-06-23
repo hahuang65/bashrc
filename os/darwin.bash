@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # A5 paths
-export PATH="$PATH:$HOME/Documents/Projects/a5/toolbox"
+export PATH="$PATH:$HOME/Projects/a5/toolbox"
 
 # Homebrew paths
 export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/opt/findutils/libexec/gnubin:/opt/homebrew/sbin:/opt/homebrew/bin:$PATH"
