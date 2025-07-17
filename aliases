@@ -41,10 +41,12 @@ if hash ov 2>/dev/null; then
   alias less="ov"
 fi
 
-if hash dog 2>/dev/null; then
-  alias dig="dog"
+if hash doggo 2>/dev/null; then
+  alias dig="doggo"
 fi
 
 if hash curlie 2>/dev/null; then
   alias curl="curlie"
+elif hash http 2>/dev/null; then
+  alias curl="http"
 fi
