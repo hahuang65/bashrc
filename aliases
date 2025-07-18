@@ -1,52 +1,43 @@
 #!/usr/bin/env bash
 
-alias hs="history | grep --color=auto"
-alias ls="ls --color=auto"
-alias mv="mv --interactive --verbose"
-alias cp="cp --interactive --verbose --recursive"
-alias mkdir="mkdir --verbose --parents"
+_setup_aliases() {
+  alias_available() {
+    local target="$1"
+    shift
 
-if hash prettyping 2>/dev/null; then
-  alias ping="prettyping --nolegend"
-fi
+    for alternative in "$@"; do
+      if exists "$alternative"; then
+        alias "$target"="$alternative"
+        return 0
+      fi
+    done
 
-if hash btm 2>/dev/null; then
-  alias top="btm"
-elif hash bpytop 2>/dev/null; then
-  alias top="bpytop"
-elif hash htop 2>/dev/null; then
-  alias top="htop"
-fi
+    return 1
+  }
 
-if hash bat 2>/dev/null; then
-  alias cat="bat"
+  alias hs="history | grep --color=auto"
+  alias ls="ls --color=auto"
+  alias mv="mv --interactive --verbose"
+  alias cp="cp --interactive --verbose --recursive"
+  alias mkdir="mkdir --verbose --parents"
 
-  if hash batman 2>/dev/null; then
-    alias man="batman"
-  else
-    export MANPAGER="sh -c 'col -bx | bat --language man --plain --pager=\"less --raw-control-chars\"'"
-    export MANROFFOPT="-c"
+  if alias_available cat bat; then
+    if ! alias_available man batman; then
+      export MANPAGER="sh -c 'col -bx | bat --language man --plain --pager=\"less --raw-control-chars\"'"
+      export MANROFFOPT="-c"
+    fi
+
+    alias_available rg batgrep
   fi
 
-  if hash batgrep 2>/dev/null; then
-    alias rg="batgrep"
-  fi
-fi
+  alias_available curl curlie http
+  alias_available dig doggo
+  alias_available watch hwatch
+  alias_available less ov
+  alias_available ping prettyping
+  alias_available top btm htop
 
-if hash hwatch 2>/dev/null; then
-  alias watch="hwatch"
-fi
+}
 
-if hash ov 2>/dev/null; then
-  alias less="ov"
-fi
-
-if hash doggo 2>/dev/null; then
-  alias dig="doggo"
-fi
-
-if hash curlie 2>/dev/null; then
-  alias curl="curlie"
-elif hash http 2>/dev/null; then
-  alias curl="http"
-fi
+_setup_aliases
+unset -f _setup_aliases

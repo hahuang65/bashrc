@@ -12,13 +12,24 @@ source_file() {
 }
 
 source_dir() {
-  for i in $1; do
+  local pattern="$1"
+  local exclude=""
+
+  # Check if --exclude is provided
+  if [[ "$2" == "--exclude" ]]; then
+    exclude="$3"
+  fi
+
+  for i in $pattern; do
+    # Skip if file matches exclusion
+    if [[ -n "$exclude" && "$(basename "$i")" == "$exclude" ]]; then
+      continue
+    fi
     source_file "$i"
   done
 }
 
 initialize() {
-  export GOPATH="$HOME/.go"
   export PATH="$HOME/.scripts:$HOME/.local/bin:$GOPATH/bin:$PATH"
 
   # Source  secret stuff
@@ -28,14 +39,10 @@ initialize() {
   BASHRC=$(readlink "$HOME"/.bashrc)
   BASHRC_DIR=${BASHRC%/*}
 
-  # Source OS-specific stuff
-  OS=$(uname | tr '[:upper:]' '[:lower:]')
-  test -e "$BASHRC_DIR/os/$OS.bash" && source_file "$BASHRC_DIR/os/$OS.bash"
-
   if test -e "$HOME/.dotfiles"; then
-    source_file "$BASHRC_DIR"/aliases
-    source_dir "$BASHRC_DIR/customizations/*.bash"
-    source_dir "$BASHRC_DIR/functions/*.bash"
+    source_dir "$BASHRC_DIR/functions/*.bash" # Load first so helper functions (_*.bash files) are already loaded
+    source_file "$BASHRC_DIR/aliases"
+    source_dir "$BASHRC_DIR/customizations/*.bash" --exclude "direnv.bash"
     source_file "$BASHRC_DIR/customizations/direnv.bash" # Has to happen after all other prompt manipulations
   fi
 

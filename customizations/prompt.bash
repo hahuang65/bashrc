@@ -18,4 +18,4 @@ prompt_command() {
   export PS1
 }
 
-export PROMPT_COMMAND=prompt_command
+export PROMPT_COMMAND="${PROMPT_COMMAND}prompt_command"

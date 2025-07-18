@@ -8,8 +8,9 @@ fi
 
 # Don't clobber history, just append to it
 shopt -s histappend
+
 # Immediately append to history instead of waiting on session end
-export PROMPT_COMMAND='history -a'
+PROMPT_COMMAND="history -a;history -n;${PROMPT_COMMAND}"
 
 # Save multi-line commands as a single command
 shopt -s cmdhist
