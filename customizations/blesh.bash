@@ -8,6 +8,7 @@ if [[ $- == *i* ]]; then
     set --
     source ~/.local/share/blesh/ble.sh
     bleopt keymap_vi_mode_show:=
+    bleopt color_scheme=catppuccin_mocha
   else
     echo "ble.sh not found, downloading and installing..."
 
