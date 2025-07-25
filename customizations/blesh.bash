@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 # Only proceed in interactive shells
-if [[ $- == *i* ]]; then
+if [[ $- == *i* && ${ENABLE_BLESH} == "1" ]]; then
   # Check if ble.sh is already installed
   if [ -f ~/.local/share/blesh/ble.sh ]; then
     # Clear positional parameters to avoid passing script name to ble.sh
     set --
     source ~/.local/share/blesh/ble.sh
-    bleopt keymap_vi_mode_show:=
+    # bleopt keymap_vi_mode_show:=
     bleopt color_scheme=catppuccin_mocha
   else
     echo "ble.sh not found, downloading and installing..."
