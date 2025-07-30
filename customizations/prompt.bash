@@ -22,7 +22,9 @@ _setup_prompt() {
       export PS1
     }
 
-    export PROMPT_COMMAND="${PROMPT_COMMAND}prompt_command"
+    if [[ ! ";${PROMPT_COMMAND};" == *";prompt_command;"* ]]; then
+      export PROMPT_COMMAND="prompt_command;${PROMPT_COMMAND}"
+    fi
   fi
 }
 
