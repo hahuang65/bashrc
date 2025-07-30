@@ -15,11 +15,11 @@ _setup_aliases() {
     return 1
   }
 
+  alias cp="cp --interactive --verbose --recursive"
   alias hs="history | grep --color=auto"
   alias ls="ls --color=auto"
-  alias mv="mv --interactive --verbose"
-  alias cp="cp --interactive --verbose --recursive"
   alias mkdir="mkdir --verbose --parents"
+  alias mv="mv --interactive --verbose"
 
   if alias_available cat bat; then
     if ! alias_available man batman; then
@@ -35,6 +35,7 @@ _setup_aliases() {
   alias_available watch hwatch
   alias_available less ov
   alias_available ping prettyping
+  alias_available ps procs
   alias_available top btm htop
 
 }

@@ -2,5 +2,9 @@
 
 # Finds all processes with the given name
 function pss() {
-  ps aux | grep -i "$1" | grep -v grep
+  if exists procs; then
+    procs --tree "$1"
+  else
+    pgrep -i "$1" | xargs ps -p
+  fi
 }
