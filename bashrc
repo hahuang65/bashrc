@@ -40,7 +40,8 @@ initialize() {
   BASHRC_DIR=${BASHRC%/*}
 
   if test -e "$HOME/.dotfiles"; then
-    source_dir "$BASHRC_DIR/functions/*.bash" # Load first so helper functions (_*.bash files) are already loaded
+    source_dir "$BASHRC_DIR/functions/_*.bash"    # Load first so helper functions (_*.bash files) are already loaded
+    source_dir "$BASHRC_DIR/functions/[!_]*.bash" # Load non-helper functions (exclude _*.bash files)
     source_file "$BASHRC_DIR/aliases"
     source_dir "$BASHRC_DIR/customizations/*.bash" --exclude "direnv.bash"
     source_file "$BASHRC_DIR/customizations/direnv.bash" # Has to happen after all other prompt manipulations
