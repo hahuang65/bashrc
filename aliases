@@ -22,6 +22,10 @@ _setup_aliases() {
   alias mv="mv --interactive --verbose"
   alias scp='rsync --archive --verbose --human-readable --compress --partial --progress --xattrs --acls --rsh="ssh"'
 
+  if [ "$(uname)" = "Linux" ]; then
+    alias logout='loginctl terminate-session "$XDG_SESSION_ID"'
+  fi
+
   if alias_available cat bat; then
     if ! alias_available man batman; then
       export MANPAGER="sh -c 'col -bx | bat --language man --plain --pager=\"less --raw-control-chars\"'"
