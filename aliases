@@ -51,9 +51,9 @@ _setup_aliases() {
 # aliases are ready before the user types anything.
 _deferred_aliases() {
   _setup_aliases
-  unset -f _setup_aliases _deferred_aliases alias_available
-
-  # Remove ourselves from PROMPT_COMMAND
-  PROMPT_COMMAND="${PROMPT_COMMAND//_deferred_aliases;/}"
+  unset -f _setup_aliases alias_available
+  # Redefine as no-op; removing from PROMPT_COMMAND is fragile when
+  # starship converts it to an array (bash 5.1+)
+  _deferred_aliases() { :; }
 }
 PROMPT_COMMAND="_deferred_aliases;${PROMPT_COMMAND}"
