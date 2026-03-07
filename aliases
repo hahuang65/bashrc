@@ -22,7 +22,7 @@ _setup_aliases() {
   alias mv="mv --interactive --verbose"
   alias scp='rsync --archive --verbose --human-readable --compress --partial --progress --xattrs --acls --rsh="ssh"'
 
-  if [ "$(uname)" = "Linux" ]; then
+  if [[ $OSTYPE == linux-gnu* ]]; then
     alias logout='loginctl terminate-session "$XDG_SESSION_ID"'
   fi
 
@@ -45,5 +45,15 @@ _setup_aliases() {
 
 }
 
-_setup_aliases
-unset -f _setup_aliases
+# Defer alias setup to first prompt to avoid blocking shell startup.
+# The alias_available() calls search PATH for each candidate command,
+# which is slow with a long PATH. By deferring to PROMPT_COMMAND,
+# aliases are ready before the user types anything.
+_deferred_aliases() {
+  _setup_aliases
+  unset -f _setup_aliases _deferred_aliases alias_available
+
+  # Remove ourselves from PROMPT_COMMAND
+  PROMPT_COMMAND="${PROMPT_COMMAND//_deferred_aliases;/}"
+}
+PROMPT_COMMAND="_deferred_aliases;${PROMPT_COMMAND}"

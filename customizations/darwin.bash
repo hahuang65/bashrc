@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [[ "$(uname)" == "Darwin" ]]; then
+if [[ $OSTYPE == darwin* ]]; then
   # A5 paths
   export PATH="$HOME/Projects/a5/toolbox:$PATH"
 

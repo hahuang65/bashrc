@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Implementation Plan: Bashrc Startup Optimization</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'Fira Code', 'SF Mono', Consolas, monospace;
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --surface-elevated: #ffffff;
+  --border: rgba(0, 0, 0, 0.07);
+  --border-bright: rgba(0, 0, 0, 0.14);
+  --text: #1c1917;
+  --text-dim: #78716c;
+  --accent: #b45309;
+  --accent-dim: rgba(180, 83, 9, 0.08);
+  --teal: #0d9488;
+  --teal-dim: rgba(13, 148, 136, 0.08);
+  --red: #dc2626;
+  --red-dim: rgba(220, 38, 38, 0.06);
+  --green: #16a34a;
+  --green-dim: rgba(22, 163, 74, 0.06);
+  --blue: #2563eb;
+  --blue-dim: rgba(37, 99, 235, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c0a09;
+    --surface: #1c1917;
+    --surface-elevated: #292524;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-bright: rgba(255, 255, 255, 0.12);
+    --text: #fafaf9;
+    --text-dim: #a8a29e;
+    --accent: #f59e0b;
+    --accent-dim: rgba(245, 158, 11, 0.12);
+    --teal: #2dd4bf;
+    --teal-dim: rgba(45, 212, 191, 0.1);
+    --red: #f87171;
+    --red-dim: rgba(248, 113, 113, 0.1);
+    --green: #4ade80;
+    --green-dim: rgba(74, 222, 128, 0.1);
+    --blue: #60a5fa;
+    --blue-dim: rgba(96, 165, 250, 0.1);
+  }
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 40px 24px 80px;
+  background-image: radial-gradient(circle at 70% 10%, var(--accent-dim) 0%, transparent 40%);
+}
+
+.container { max-width: 1100px; margin: 0 auto; }
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  margin-bottom: 40px;
+}
+
+h2 {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+/* Strategy cards */
+.strategies {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.strategy-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.strategy-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.strategy-card.s1::before { background: var(--teal); }
+.strategy-card.s2::before { background: var(--accent); }
+.strategy-card.s3::before { background: var(--green); }
+
+.strategy-card .number {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+
+.strategy-card .title {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.strategy-card .desc {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+
+.strategy-card .savings {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--green);
+  background: var(--green-dim);
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+}
+
+/* File map */
+.file-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  margin-bottom: 48px;
+}
+
+.file-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.file-card .fname {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.file-card .change {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.file-card .tag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.tag.ostype { background: var(--teal-dim); color: var(--teal); }
+.tag.shims { background: var(--accent-dim); color: var(--accent); }
+.tag.inline { background: var(--blue-dim); color: var(--blue); }
+.tag.defer { background: var(--green-dim); color: var(--green); }
+
+/* Before/after code */
+.code-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.code-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.code-panel .panel-header {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.code-panel.before .panel-header {
+  color: var(--red);
+  background: var(--red-dim);
+}
+
+.code-panel.after .panel-header {
+  color: var(--green);
+  background: var(--green-dim);
+}
+
+.code-panel pre {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.7;
+  padding: 14px 16px;
+  overflow-x: auto;
+  color: var(--text);
+}
+
+.code-panel pre .hl { color: var(--accent); font-weight: 500; }
+.code-panel pre .dim { color: var(--text-dim); }
+
+/* State machine */
+.mermaid-wrap {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  overflow: auto;
+  margin-bottom: 48px;
+}
+
+.mermaid-wrap .zoom-controls {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 4px;
+  z-index: 10;
+}
+
+.mermaid-wrap .zoom-controls button {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-bright);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mermaid-wrap .zoom-controls button:hover {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.mermaid .nodeLabel { color: var(--text) !important; }
+.mermaid .edgeLabel { color: var(--text-dim) !important; background-color: var(--bg) !important; }
+.mermaid .edgeLabel rect { fill: var(--bg) !important; }
+.mermaid .nodeLabel { font-family: var(--font-body) !important; font-size: 14px !important; }
+.mermaid .edgeLabel { font-family: var(--font-mono) !important; font-size: 12px !important; }
+
+/* Edge cases */
+.edge-cases {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.edge-case {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.edge-case .scenario {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.edge-case .handling {
+  font-size: 0.84rem;
+  color: var(--text-dim);
+}
+
+.edge-case .handling code {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  background: var(--accent-dim);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* Trade-offs */
+.tradeoffs {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.tradeoff {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 200px 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.tradeoff:last-child { border-bottom: none; }
+
+.tradeoff .topic {
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.tradeoff .pro, .tradeoff .con {
+  font-size: 0.84rem;
+  color: var(--text-dim);
+}
+
+.tradeoff .pro::before {
+  content: '+';
+  color: var(--green);
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+.tradeoff .con::before {
+  content: '-';
+  color: var(--red);
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+.tradeoff-header {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border-bright);
+  background: var(--surface-elevated);
+  display: grid;
+  grid-template-columns: 200px 1fr 1fr;
+  gap: 16px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+
+@media (max-width: 700px) {
+  .strategies { grid-template-columns: 1fr; }
+  .code-compare { grid-template-columns: 1fr; }
+  .edge-cases { grid-template-columns: 1fr; }
+  .tradeoff { grid-template-columns: 1fr; }
+  .tradeoff-header { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Bashrc Startup Speed</h1>
+<p class="subtitle">Implementation plan: 3 strategies, 8 files, ~0.5s &rarr; ~0.2s</p>
+
+<h2>Three Optimization Strategies</h2>
+<div class="strategies">
+  <div class="strategy-card s1">
+    <div class="number">Strategy 1</div>
+    <div class="title">Replace $(uname) with $OSTYPE</div>
+    <div class="desc">Eliminate 10 subshell forks across 6 files. $OSTYPE is a bash built-in variable — zero cost, no fork needed.</div>
+    <div class="savings">-0.07s</div>
+  </div>
+  <div class="strategy-card s2">
+    <div class="number">Strategy 2</div>
+    <div class="title">Eliminate fork+eval overhead</div>
+    <div class="desc">Replace mise activate with inline shims PATH. Inline direnv hook with cached binary path. No subprocess spawning at startup.</div>
+    <div class="savings">-0.24s</div>
+  </div>
+  <div class="strategy-card s3">
+    <div class="number">Strategy 3</div>
+    <div class="title">Defer aliases to first prompt</div>
+    <div class="desc">Move alias_available PATH lookups from startup to PROMPT_COMMAND. Aliases are ready before user types anything.</div>
+    <div class="savings">-0.17s</div>
+  </div>
+</div>
+
+<h2>File Change Map</h2>
+<div class="file-map">
+  <div class="file-card">
+    <span class="tag ostype">$OSTYPE</span>
+    <span class="fname">customizations/darwin.bash</span>
+    <span class="change">$(uname) &rarr; $OSTYPE pattern match</span>
+  </div>
+  <div class="file-card">
+    <span class="tag ostype">$OSTYPE</span>
+    <span class="fname">customizations/linux.bash</span>
+    <span class="change">$(uname) &rarr; $OSTYPE pattern match</span>
+  </div>
+  <div class="file-card">
+    <span class="tag ostype">$OSTYPE</span>
+    <span class="fname">customizations/grep.bash</span>
+    <span class="change">2x $(uname) &rarr; $OSTYPE</span>
+  </div>
+  <div class="file-card">
+    <span class="tag ostype">$OSTYPE</span>
+    <span class="fname">customizations/fzf.bash</span>
+    <span class="change">2x $(uname) &rarr; $OSTYPE + exists</span>
+  </div>
+  <div class="file-card">
+    <span class="tag ostype">$OSTYPE</span>
+    <span class="fname">customizations/completions.bash</span>
+    <span class="change">2x $(uname) + hash &rarr; $OSTYPE + exists</span>
+  </div>
+  <div class="file-card">
+    <span class="tag shims">Shims</span>
+    <span class="fname">customizations/mise.bash</span>
+    <span class="change">eval "$(mise activate)" &rarr; inline PATH</span>
+  </div>
+  <div class="file-card">
+    <span class="tag inline">Inline</span>
+    <span class="fname">customizations/direnv.bash</span>
+    <span class="change">eval "$(direnv hook)" &rarr; inlined hook</span>
+  </div>
+  <div class="file-card">
+    <span class="tag defer">Defer</span>
+    <span class="fname">aliases</span>
+    <span class="change">Immediate &rarr; PROMPT_COMMAND deferred</span>
+  </div>
+</div>
+
+<h2>Key Before/After: mise.bash</h2>
+<div class="code-compare">
+  <div class="code-panel before">
+    <div class="panel-header">Before (0.201s)</div>
+    <pre><span class="dim">#!/usr/bin/env bash</span>
+
+_setup_mise() {
+  if exists mise; then
+    if [ <span class="hl">"$(uname)"</span> = "Darwin" ]; then
+      export MISE_ASDF_COMPAT=1
+    fi
+    <span class="hl">eval "$(mise activate bash)"</span>
+  fi
+}
+_setup_mise
+unset -f _setup_mise</pre>
+  </div>
+  <div class="code-panel after">
+    <div class="panel-header">After (0.000s)</div>
+    <pre><span class="dim">#!/usr/bin/env bash</span>
+
+if exists mise; then
+  if [[ <span class="hl">$OSTYPE</span> == darwin* ]]; then
+    export MISE_ASDF_COMPAT=1
+  fi
+  <span class="hl">export PATH="$HOME/.local/share/mise/shims:$PATH"</span>
+fi</pre>
+  </div>
+</div>
+
+<h2>Key Before/After: aliases (deferred)</h2>
+<div class="code-compare">
+  <div class="code-panel before">
+    <div class="panel-header">Before (0.170s at startup)</div>
+    <pre><span class="dim">_setup_aliases() {</span>
+  <span class="dim">alias_available cat bat</span>
+  <span class="dim">alias_available curl curlie http</span>
+  <span class="dim">...</span>
+<span class="dim">}</span>
+
+<span class="hl">_setup_aliases</span>
+unset -f _setup_aliases</pre>
+  </div>
+  <div class="code-panel after">
+    <div class="panel-header">After (0.000s at startup, 0.170s at first prompt)</div>
+    <pre><span class="dim">_setup_aliases() { ... }</span>
+
+<span class="hl">_deferred_aliases()</span> {
+  _setup_aliases
+  unset -f _setup_aliases \
+    _deferred_aliases alias_available
+  <span class="dim"># Remove ourselves from PROMPT_COMMAND</span>
+  PROMPT_COMMAND="${PROMPT_COMMAND//_deferred_aliases;/}"
+}
+<span class="hl">PROMPT_COMMAND="_deferred_aliases;${PROMPT_COMMAND}"</span></pre>
+  </div>
+</div>
+
+<h2>Deferred Alias Lifecycle</h2>
+<div class="mermaid-wrap">
+  <div class="zoom-controls">
+    <button onclick="this.closest('.mermaid-wrap').querySelector('.mermaid').style.zoom=(parseFloat(this.closest('.mermaid-wrap').querySelector('.mermaid').style.zoom||1)-0.1)">-</button>
+    <button onclick="this.closest('.mermaid-wrap').querySelector('.mermaid').style.zoom=(parseFloat(this.closest('.mermaid-wrap').querySelector('.mermaid').style.zoom||1)+0.1)">+</button>
+  </div>
+  <pre class="mermaid">
+stateDiagram-v2
+  [*] --> Defined : source aliases file
+  Defined --> Waiting : prepend to PROMPT_COMMAND
+  Waiting --> Running : first prompt renders
+  Running --> AliasesReady : _setup_aliases completes
+  AliasesReady --> CleanedUp : unset functions
+  CleanedUp --> Removed : strip from PROMPT_COMMAND
+  Removed --> [*]
+  </pre>
+</div>
+
+<h2>Edge Cases and Considerations</h2>
+<div class="edge-cases">
+  <div class="edge-case">
+    <div class="scenario">mise env vars not auto-loaded on cd</div>
+    <div class="handling">Shims mode doesn't run <code>mise hook-env</code>. Per-directory env switching is handled by <code>direnv</code> instead. Tool versions still resolve correctly via shims.</div>
+  </div>
+  <div class="edge-case">
+    <div class="scenario">direnv changes hook format</div>
+    <div class="handling">The inlined hook matches <code>direnv hook bash</code> output which has been stable for years. Binary path is cached in <code>_direnv_bin</code> and resolves via <code>command -v</code>.</div>
+  </div>
+  <div class="edge-case">
+    <div class="scenario">PROMPT_COMMAND is an array (Bash 5.1+)</div>
+    <div class="handling">The direnv hook checks <code>declare -p</code> and handles both string and array forms. The deferred aliases use string form which matches the existing history.bash pattern.</div>
+  </div>
+  <div class="edge-case">
+    <div class="scenario">$OSTYPE value varies across OS versions</div>
+    <div class="handling">Using glob matching: <code>darwin*</code> matches darwin23, darwin24, etc. <code>linux-gnu*</code> matches all Linux variants.</div>
+  </div>
+</div>
+
+<h2>Trade-offs</h2>
+<div class="tradeoffs">
+  <div class="tradeoff-header">
+    <span>Decision</span>
+    <span>Benefit</span>
+    <span>Cost</span>
+  </div>
+  <div class="tradeoff">
+    <div class="topic">mise: shims vs activate</div>
+    <div class="pro">Eliminates 0.2s startup + 20ms per-prompt hook-env</div>
+    <div class="con">~5ms overhead per tool invocation via shim resolution</div>
+  </div>
+  <div class="tradeoff">
+    <div class="topic">direnv: inline vs eval</div>
+    <div class="pro">Eliminates 0.045s fork at startup</div>
+    <div class="con">Must update manually if direnv changes hook format</div>
+  </div>
+  <div class="tradeoff">
+    <div class="topic">aliases: defer vs immediate</div>
+    <div class="pro">Moves 0.17s of PATH lookups off critical startup path</div>
+    <div class="con">Aliases resolve at first prompt instead of at source time</div>
+  </div>
+  <div class="tradeoff">
+    <div class="topic">$OSTYPE vs $(uname)</div>
+    <div class="pro">Zero-cost built-in variable, no fork</div>
+    <div class="con">Pattern matching syntax differs from string equality</div>
+  </div>
+</div>
+
+</div>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    look: 'classic',
+    themeVariables: {
+      primaryColor: isDark ? '#292524' : '#fef3c7',
+      primaryBorderColor: isDark ? '#f59e0b' : '#b45309',
+      primaryTextColor: isDark ? '#fafaf9' : '#1c1917',
+      secondaryColor: isDark ? '#1c1917' : '#f0fdf4',
+      secondaryBorderColor: isDark ? '#4ade80' : '#16a34a',
+      secondaryTextColor: isDark ? '#fafaf9' : '#1c1917',
+      lineColor: isDark ? '#78716c' : '#a8a29e',
+      fontSize: '14px',
+      fontFamily: "'DM Sans', system-ui, sans-serif",
+    }
+  });
+</script>
+</body>
+</html>

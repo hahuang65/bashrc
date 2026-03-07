@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-if [ "$(uname)" = "Linux" ]; then
+if [[ $OSTYPE == linux-gnu* ]]; then
   export GREP_COLOR='mt=1;32'
-elif [ "$(uname)" = "Darwin" ]; then
+elif [[ $OSTYPE == darwin* ]]; then
   export GREP_COLOR='1;32'
 fi
 

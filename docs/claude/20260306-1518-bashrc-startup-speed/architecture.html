@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bashrc Startup Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+  --bg: #f5f5f0;
+  --surface: #ffffff;
+  --surface-elevated: #ffffff;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-bright: rgba(0, 0, 0, 0.15);
+  --text: #1a1a2e;
+  --text-dim: #6b7280;
+  --accent: #0d6e6e;
+  --accent-dim: rgba(13, 110, 110, 0.1);
+  --red: #dc2626;
+  --red-dim: rgba(220, 38, 38, 0.08);
+  --red-light: rgba(220, 38, 38, 0.15);
+  --green: #059669;
+  --green-dim: rgba(5, 150, 105, 0.08);
+  --green-light: rgba(5, 150, 105, 0.15);
+  --amber: #d97706;
+  --amber-dim: rgba(217, 119, 6, 0.08);
+  --node-a: #0d6e6e;
+  --node-a-dim: rgba(13, 110, 110, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1117;
+    --surface: #181c25;
+    --surface-elevated: #1e2330;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-bright: rgba(255, 255, 255, 0.12);
+    --text: #e2e8f0;
+    --text-dim: #8b949e;
+    --accent: #2dd4bf;
+    --accent-dim: rgba(45, 212, 191, 0.12);
+    --red: #f87171;
+    --red-dim: rgba(248, 113, 113, 0.1);
+    --red-light: rgba(248, 113, 113, 0.18);
+    --green: #34d399;
+    --green-dim: rgba(52, 211, 153, 0.1);
+    --green-light: rgba(52, 211, 153, 0.18);
+    --amber: #fbbf24;
+    --amber-dim: rgba(251, 191, 36, 0.1);
+    --node-a: #2dd4bf;
+    --node-a-dim: rgba(45, 212, 191, 0.1);
+  }
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 40px 24px;
+  background-image: radial-gradient(circle at 30% 20%, var(--accent-dim) 0%, transparent 50%);
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  margin-bottom: 40px;
+}
+
+h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.8rem;
+}
+
+/* KPI strip */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+.kpi .value {
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.kpi .label {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kpi.before .value { color: var(--red); }
+.kpi.after .value { color: var(--green); }
+.kpi.delta .value { color: var(--accent); }
+
+/* Sections */
+.section {
+  margin-bottom: 40px;
+}
+
+/* Mermaid */
+.mermaid-wrap {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  overflow: auto;
+}
+
+.mermaid-wrap .zoom-controls {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 4px;
+  z-index: 10;
+}
+
+.mermaid-wrap .zoom-controls button {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-bright);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mermaid-wrap .zoom-controls button:hover {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.mermaid .nodeLabel { color: var(--text) !important; }
+.mermaid .edgeLabel { color: var(--text-dim) !important; background-color: var(--bg) !important; }
+.mermaid .edgeLabel rect { fill: var(--bg) !important; }
+.mermaid .node rect, .mermaid .node circle, .mermaid .node polygon { stroke-width: 1.5px; }
+.mermaid .edge-pattern-solid { stroke-width: 1.5px; }
+.mermaid .edgeLabel { font-family: var(--font-mono) !important; font-size: 13px !important; }
+.mermaid .nodeLabel { font-family: var(--font-body) !important; font-size: 15px !important; }
+
+/* Before/after comparison table */
+.comparison-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.comparison-table th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  font-weight: 600;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-bright);
+  background: var(--surface-elevated);
+}
+
+.comparison-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.comparison-table tr:last-child td { border-bottom: none; }
+
+.comparison-table .file-name {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.comparison-table .time {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.comparison-table .time.slow { color: var(--red); }
+.comparison-table .time.fast { color: var(--green); }
+
+.comparison-table .bar-cell {
+  width: 200px;
+}
+
+.bar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bar {
+  height: 8px;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.bar.before { background: var(--red-light); }
+.bar.after { background: var(--green-light); }
+
+.comparison-table .technique {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.comparison-table tr.total-row td {
+  font-weight: 600;
+  border-top: 2px solid var(--border-bright);
+  background: var(--surface-elevated);
+}
+
+/* PROMPT_COMMAND chain */
+.chain {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.chain-item {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.chain-item.deferred {
+  background: var(--amber-dim);
+  border: 1px solid var(--amber);
+  color: var(--amber);
+}
+
+.chain-item.hook {
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.chain-item.history {
+  background: var(--node-a-dim);
+  border: 1px solid var(--node-a);
+  color: var(--node-a);
+}
+
+.chain-arrow {
+  font-size: 1.2rem;
+  color: var(--text-dim);
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+
+.chain-note {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 400;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 24px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-dot.red { background: var(--red); }
+.legend-dot.green { background: var(--green); }
+.legend-dot.amber { background: var(--amber); }
+.legend-dot.teal { background: var(--accent); }
+
+@media (max-width: 700px) {
+  .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+  .chain { flex-direction: column; align-items: flex-start; }
+  .chain-arrow { transform: rotate(90deg); padding: 4px 0; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Bashrc Startup Architecture</h1>
+<p class="subtitle">Initialization flow, bottleneck analysis, and optimization results for ~/.dotfiles/bashrc</p>
+
+<div class="kpi-strip">
+  <div class="kpi before">
+    <div class="value">0.51s</div>
+    <div class="label">Before</div>
+  </div>
+  <div class="kpi after">
+    <div class="value">0.22s</div>
+    <div class="label">After</div>
+  </div>
+  <div class="kpi delta">
+    <div class="value">57%</div>
+    <div class="label">Faster</div>
+  </div>
+  <div class="kpi delta">
+    <div class="value">8</div>
+    <div class="label">Files changed</div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Initialization Flow</h2>
+  <div class="mermaid-wrap">
+    <div class="zoom-controls">
+      <button onclick="this.closest('.mermaid-wrap').querySelector('.mermaid').style.zoom=(parseFloat(this.closest('.mermaid-wrap').querySelector('.mermaid').style.zoom||1)-0.1)">-</button>
+      <button onclick="this.closest('.mermaid-wrap').querySelector('.mermaid').style.zoom=(parseFloat(this.closest('.mermaid-wrap').querySelector('.mermaid').style.zoom||1)+0.1)">+</button>
+    </div>
+    <pre class="mermaid">
+flowchart TD
+  BP["bash_profile"] --> RC["bashrc"]
+  RC --> INIT["initialize()"]
+  INIT --> PATH["PATH setup"]
+  INIT --> SEC["~/.secrets.sh"]
+  INIT --> FN["functions/_*.bash<br/>exists, diff, marks, psk, pss, sshs"]
+  INIT --> AL["aliases<br/>deferred to PROMPT_COMMAND"]
+  INIT --> CUST["customizations/*.bash"]
+  INIT --> DIR["direnv.bash<br/>inlined hook"]
+
+  CUST --> C1["blesh / claude / colors<br/>eof / redirection / go / git"]
+  CUST --> C2["completions.bash"]
+  CUST --> C3["mise.bash<br/>inline shims PATH"]
+  CUST --> C4["fzf.bash"]
+  CUST --> C5["prompt.bash<br/>starship init"]
+  CUST --> C6["editor / grep / ov<br/>darwin / linux / history"]
+
+  classDef fast fill:#05966922,stroke:#059669,stroke-width:2px
+  classDef deferred fill:#d9770622,stroke:#d97706,stroke-width:2px
+  classDef neutral fill:#0d6e6e11,stroke:#0d6e6e44,stroke-width:1px
+  classDef entry fill:#0d6e6e33,stroke:#0d6e6e,stroke-width:2px
+
+  class BP,RC,INIT entry
+  class PATH,SEC,FN,C1,C6 neutral
+  class C2,C4 fast
+  class AL,DIR,C3 deferred
+  class C5 neutral
+    </pre>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot teal"></div> Entry point</div>
+    <div class="legend-item"><div class="legend-dot green"></div> Optimized (was slow)</div>
+    <div class="legend-item"><div class="legend-dot amber"></div> Deferred / inlined</div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Per-File Timing: Before vs After</h2>
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>File</th>
+        <th>Before</th>
+        <th>After</th>
+        <th>Visual</th>
+        <th>Optimization</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="file-name">mise.bash</td>
+        <td class="time slow">0.201s</td>
+        <td class="time fast">0.000s</td>
+        <td class="bar-cell"><div class="bar-wrapper"><div class="bar before" style="width:160px"></div><div class="bar after" style="width:0px"></div></div></td>
+        <td class="technique">Inline shims PATH</td>
+      </tr>
+      <tr>
+        <td class="file-name">aliases</td>
+        <td class="time slow">0.170s</td>
+        <td class="time fast">0.000s</td>
+        <td class="bar-cell"><div class="bar-wrapper"><div class="bar before" style="width:136px"></div><div class="bar after" style="width:0px"></div></div></td>
+        <td class="technique">Deferred to PROMPT_COMMAND</td>
+      </tr>
+      <tr>
+        <td class="file-name">completions.bash</td>
+        <td class="time slow">0.060s</td>
+        <td class="time fast">0.001s</td>
+        <td class="bar-cell"><div class="bar-wrapper"><div class="bar before" style="width:48px"></div><div class="bar after" style="width:1px"></div></div></td>
+        <td class="technique">$OSTYPE + exists</td>
+      </tr>
+      <tr>
+        <td class="file-name">direnv.bash</td>
+        <td class="time slow">0.045s</td>
+        <td class="time fast">0.001s</td>
+        <td class="bar-cell"><div class="bar-wrapper"><div class="bar before" style="width:36px"></div><div class="bar after" style="width:1px"></div></div></td>
+        <td class="technique">Inlined hook + cached path</td>
+      </tr>
+      <tr>
+        <td class="file-name">fzf.bash</td>
+        <td class="time slow">0.036s</td>
+        <td class="time fast">0.001s</td>
+        <td class="bar-cell"><div class="bar-wrapper"><div class="bar before" style="width:29px"></div><div class="bar after" style="width:1px"></div></div></td>
+        <td class="technique">$OSTYPE + exists</td>
+      </tr>
+      <tr>
+        <td class="file-name">grep.bash</td>
+        <td class="time slow">0.035s</td>
+        <td class="time fast">0.000s</td>
+        <td class="bar-cell"><div class="bar-wrapper"><div class="bar before" style="width:28px"></div><div class="bar after" style="width:0px"></div></div></td>
+        <td class="technique">$OSTYPE</td>
+      </tr>
+      <tr>
+        <td class="file-name">darwin.bash</td>
+        <td class="time">0.021s</td>
+        <td class="time fast">0.000s</td>
+        <td class="bar-cell"><div class="bar-wrapper"><div class="bar before" style="width:17px"></div><div class="bar after" style="width:0px"></div></div></td>
+        <td class="technique">$OSTYPE</td>
+      </tr>
+      <tr>
+        <td class="file-name">linux.bash</td>
+        <td class="time">0.016s</td>
+        <td class="time fast">0.000s</td>
+        <td class="bar-cell"><div class="bar-wrapper"><div class="bar before" style="width:13px"></div><div class="bar after" style="width:0px"></div></div></td>
+        <td class="technique">$OSTYPE</td>
+      </tr>
+      <tr class="total-row">
+        <td class="file-name">Total (all files)</td>
+        <td class="time slow">~0.51s</td>
+        <td class="time fast">~0.22s</td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>PROMPT_COMMAND Chain (execution order at first prompt)</h2>
+  <div class="chain">
+    <div class="chain-item deferred">
+      _deferred_aliases
+      <span class="chain-note">Runs once, removes itself</span>
+    </div>
+    <span class="chain-arrow">&rarr;</span>
+    <div class="chain-item hook">
+      _direnv_hook
+      <span class="chain-note">Runs every prompt</span>
+    </div>
+    <span class="chain-arrow">&rarr;</span>
+    <div class="chain-item history">
+      history -a; history -n
+      <span class="chain-note">Append + reload history</span>
+    </div>
+    <span class="chain-arrow">&rarr;</span>
+    <div class="chain-item hook">
+      starship / prompt_command
+      <span class="chain-note">Renders PS1</span>
+    </div>
+  </div>
+  <div class="legend" style="margin-top: 12px">
+    <div class="legend-item"><div class="legend-dot amber"></div> One-shot (removed after first run)</div>
+    <div class="legend-item"><div class="legend-dot teal"></div> Persistent hook</div>
+  </div>
+</div>
+
+</div>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    look: 'classic',
+    themeVariables: {
+      primaryColor: isDark ? '#1a2e2e' : '#e6f7f7',
+      primaryBorderColor: isDark ? '#2dd4bf' : '#0d6e6e',
+      primaryTextColor: isDark ? '#e2e8f0' : '#1a1a2e',
+      secondaryColor: isDark ? '#1e293b' : '#f0fdf4',
+      secondaryBorderColor: isDark ? '#059669' : '#16a34a',
+      secondaryTextColor: isDark ? '#f1f5f9' : '#1e293b',
+      tertiaryColor: isDark ? '#27201a' : '#fef3c7',
+      tertiaryBorderColor: isDark ? '#d97706' : '#f59e0b',
+      tertiaryTextColor: isDark ? '#fef3c7' : '#27201a',
+      lineColor: isDark ? '#64748b' : '#94a3b8',
+      fontSize: '15px',
+      fontFamily: "'IBM Plex Sans', system-ui, sans-serif",
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,14 +1,9 @@
 #!/usr/bin/env bash
 
-_setup_mise() {
-  if exists mise; then
-    if [ "$(uname)" = "Darwin" ]; then
-      export MISE_ASDF_COMPAT=1
-    fi
-
-    eval "$(mise activate bash)"
+if exists mise; then
+  if [[ $OSTYPE == darwin* ]]; then
+    export MISE_ASDF_COMPAT=1
   fi
-}
 
-_setup_mise
-unset -f _setup_mise
+  export PATH="$HOME/.local/share/mise/shims:$PATH"
+fi

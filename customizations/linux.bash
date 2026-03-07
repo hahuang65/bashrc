@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-if [[ "$(uname)" == "Linux" ]]; then
+if [[ $OSTYPE == linux-gnu* ]]; then
   alias open="xdg-open"
 fi

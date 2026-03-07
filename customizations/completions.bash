@@ -1,18 +1,16 @@
 #!/usr/bin/env bash
 
-if [ "$(uname)" = "Linux" ]; then
+if [[ $OSTYPE == linux-gnu* ]]; then
   [[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
-# Sourcing this is really slow, commenting out to see if I really use it
-elif [ "$(uname)" = "Darwin" ]; then
-  if hash brew 2>/dev/null; then
-    # $(brew --prefix) is slow, hard-coding /opt/homebrew instead.
+elif [[ $OSTYPE == darwin* ]]; then
+  if exists brew; then
     [[ $PS1 && -f "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
   fi
 fi
 
 # AWS completion
-if hash aws_completer 2>/dev/null; then
-  AWS_COMPLETER_PATH="$(\which aws_completer)"
+if exists aws_completer; then
+  AWS_COMPLETER_PATH="$(command -v aws_completer)"
   complete -C "${AWS_COMPLETER_PATH}" aws
   complete -C "${AWS_COMPLETER_PATH}" awsl
   complete -C "${AWS_COMPLETER_PATH}" awslocal
