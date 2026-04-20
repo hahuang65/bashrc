@@ -20,7 +20,7 @@ _setup_aliases() {
   alias ls="ls --color=auto"
   alias mkdir="mkdir --verbose --parents"
   alias mv="mv --interactive --verbose"
-  alias scp='rsync --archive --verbose --human-readable --compress --partial --progress --xattrs --acls --rsh="ssh"'
+  alias scp='rsync --archive --verbose --human-readable --compress --partial --progress --rsh="ssh"'
 
   if [[ $OSTYPE == linux-gnu* ]]; then
     alias logout='loginctl terminate-session "$XDG_SESSION_ID"'

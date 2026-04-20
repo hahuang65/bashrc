@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
 if [[ $OSTYPE == linux-gnu* ]]; then
-  alias open="xdg-open"
+  open() { xdg-open "$@"; }
+  export -f open
 fi
