@@ -30,7 +30,7 @@ source_dir() {
 }
 
 initialize() {
-  export PATH="$HOME/.scripts:$HOME/.local/bin:$PATH"
+  export PATH="$HOME/.scripts:$HOME/.local/bin:$HOME/.bun/bin:$PATH"
 
   # Source  secret stuff
   test -e "$HOME/.secrets.sh" && source_file "$HOME/.secrets.sh"
