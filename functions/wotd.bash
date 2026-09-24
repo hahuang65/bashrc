@@ -110,6 +110,7 @@ _setup_wotd() {
   wotd() {
     local -r metadata_paragraph_number=2
     local -r gloss_paragraph_number=3
+    local -r metadata_separators=$'\u0095•'
     local description metadata gloss dictionary_response
     local word pronunciation part_of_speech
     local dictionary_pronunciations definitions
@@ -126,7 +127,7 @@ _setup_wotd() {
       _extract_wotd_paragraph "$gloss_paragraph_number" <<<"$description"
     )"
 
-    IFS='•' read -r word pronunciation part_of_speech <<<"$metadata"
+    IFS="$metadata_separators" read -r word pronunciation part_of_speech <<<"$metadata"
 
     declare -A item=(
       [word]="$(_trim "$word")"
