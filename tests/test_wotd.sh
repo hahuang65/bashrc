@@ -2,30 +2,9 @@
 
 set -euo pipefail
 
-source "$(dirname "$0")/../functions/wotd.bash"
+source "$(dirname "$0")/support/wotd.bash"
 
-_fetch_wotd_description() {
-  cat <<'HTML'
-<font>
-  <p>Word of the Day</p>
-  <p><strong>pundit</strong> &#149; \PUN-dit\&nbsp; &#149; <em>noun</em></p>
-  <p>A pundit presents opinions via the media.</p>
-</font>
-HTML
-}
-
-assert_contains() {
-  local -r output="$1"
-  local -r expected="$2"
-
-  if [[ $output != *"$expected"* ]]; then
-    printf 'Expected output to contain: %s\n\nActual output:\n%s\n' \
-      "$expected" "$output" >&2
-    return 1
-  fi
-}
-
-unset DICTIONARY_API_TOKEN
+setup_wotd_test
 output="$(wotd)"
 
 assert_contains "$output" 'Word: pundit'
@@ -47,6 +26,7 @@ assert_card_width "$output"
 assert_contains "$output" '|                                                                          |'
 
 card_wraps_long_definitions_and_removes_terminal_controls() (
+  setup_wotd_test
   export DICTIONARY_API_TOKEN=test-token
   _define_word() {
     printf '%s' '[{"hwi":{"prs":[{"mw":"PUN-dit"}]},"shortdef":["\u001bA person who offers opinions about subjects in the news, including politics, economics, culture, science, and international affairs. Unicode: café 漢字 e\u0301.","abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"]}]'
@@ -64,9 +44,8 @@ card_wraps_long_definitions_and_removes_terminal_controls() (
 )
 
 card_is_not_printed_until_formatting_is_complete() (
-  local output_directory
-  output_directory=$(mktemp -d)
-  trap 'rm -rf "$output_directory"' EXIT
+  setup_wotd_test
+  local -r output_directory="$test_directory"
 
   # Observe stdout while a width measurement is still in progress.
   wc() {

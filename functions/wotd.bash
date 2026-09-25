@@ -115,7 +115,7 @@ _setup_wotd() {
     _print_wotd_lines "$content_width" "${lines[@]}"
   }
 
-  wotd() {
+  _render_wotd() {
     local -r metadata_paragraph_number=2
     local -r gloss_paragraph_number=3
     local -r metadata_separators=$'\u0095•'
@@ -129,11 +129,11 @@ _setup_wotd() {
 
     metadata="$(
       _extract_wotd_paragraph "$metadata_paragraph_number" <<<"$description"
-    )"
+    )" || return 0
 
     gloss="$(
       _extract_wotd_paragraph "$gloss_paragraph_number" <<<"$description"
-    )"
+    )" || return 0
 
     IFS="$metadata_separators" read -r word pronunciation part_of_speech <<<"$metadata"
 
@@ -143,6 +143,7 @@ _setup_wotd() {
       [part_of_speech]="$(_trim "$part_of_speech")"
       [gloss]="$gloss"
     )
+    [[ -n ${item[word]} && -n $gloss ]] || return 0
 
     if [[ -n ${DICTIONARY_API_TOKEN:-} ]] &&
       dictionary_response="$(_define_word "${item[word]}")" &&
@@ -158,6 +159,56 @@ _setup_wotd() {
     fi
 
     _print_wotd_card item
+  }
+
+  _prepare_wotd_cache() {
+    local -r directory="$1"
+
+    [[ $directory == /* && ! -L $directory ]] || return 1
+    if [[ ! -e $directory ]]; then
+      mkdir -m 700 -- "$directory" 2>/dev/null || :
+    fi
+    [[ -d $directory && -O $directory && ! -L $directory ]] || return 1
+    chmod 700 -- "$directory" 2>/dev/null
+  }
+
+  _save_wotd_cache() {
+    local -r cache_file="$1" card="$2"
+    local temporary_file
+
+    [[ ! -L $cache_file && ! -d $cache_file ]] || return 1
+    temporary_file=$(mktemp "${cache_file%/*}/.card.XXXXXX" 2>/dev/null) || return 1
+    if ! printf '%s\n' "$card" >"$temporary_file" ||
+      ! mv -f -- "$temporary_file" "$cache_file" 2>/dev/null; then
+      rm -f -- "$temporary_file"
+      return 1
+    fi
+  }
+
+  wotd() {
+    local -r cache_directory="${TMPDIR:-/tmp}/wotd-$UID"
+    local cache_day cache_file card
+    local dictionary_mode=feed
+    [[ -n ${DICTIONARY_API_TOKEN:-} ]] && dictionary_mode=dictionary
+    printf -v cache_day '%(%F)T' -1
+    cache_file="$cache_directory/$cache_day-$dictionary_mode.txt"
+
+    if ! _prepare_wotd_cache "$cache_directory"; then
+      _render_wotd
+      return
+    fi
+
+    if [[ -f $cache_file && -O $cache_file && ! -L $cache_file ]] &&
+      { card=$(<"$cache_file"); } 2>/dev/null && [[ -n $card ]]; then
+      printf '%s\n' "$card"
+      return
+    fi
+
+    if ! card=$(_render_wotd) || [[ -z $card ]]; then
+      return 0
+    fi
+    _save_wotd_cache "$cache_file" "$card" || :
+    printf '%s\n' "$card"
   }
 }
 
