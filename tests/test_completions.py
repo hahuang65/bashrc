@@ -33,7 +33,7 @@ class Shell:
             os.execve(BASH, [BASH, "--noprofile", "--rcfile", str(rcfile), "-i"], environment)
         self.received = b""
         try:
-            self.read_until(PROMPT)
+            self.startup_output = self.read_until(PROMPT)
         except Exception:
             self.close()
             raise
