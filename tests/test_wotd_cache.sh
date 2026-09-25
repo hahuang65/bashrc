@@ -152,6 +152,22 @@ a_failed_temporary_file_allocation_does_not_suppress_the_card() {
   [[ ! -e $cache_file ]]
 }
 
+the_cache_works_with_the_shells_noclobber_setting() {
+  source "$(dirname "$wotd_source")/../customizations/redirection.bash"
+
+  {
+    wotd >"$test_directory/first"
+    wotd >"$test_directory/second"
+  } 2>"$test_directory/errors"
+
+  assert_equal '' "$(<"$test_directory/errors")"
+  assert_contains "$(<"$test_directory/first")" 'Word: pundit'
+  cmp "$test_directory/first" "$cache_file"
+  cmp "$test_directory/first" "$test_directory/second"
+  assert_equal feed "$(<"$test_directory/requests")"
+  [[ -o noclobber ]]
+}
+
 simultaneous_calls_publish_complete_cards() {
   local first_process second_process
   wotd >"$test_directory/first" &
@@ -188,3 +204,4 @@ run_test cache_files_are_private_and_published_complete
 run_test a_failed_cache_write_does_not_suppress_the_card
 run_test a_failed_temporary_file_allocation_does_not_suppress_the_card
 run_test simultaneous_calls_publish_complete_cards
+run_test the_cache_works_with_the_shells_noclobber_setting

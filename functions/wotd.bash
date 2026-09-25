@@ -178,7 +178,8 @@ _setup_wotd() {
 
     [[ ! -L $cache_file && ! -d $cache_file ]] || return 1
     temporary_file=$(mktemp "${cache_file%/*}/.card.XXXXXX" 2>/dev/null) || return 1
-    if ! printf '%s\n' "$card" >"$temporary_file" ||
+    # mktemp already created this private file; allow this one overwrite.
+    if ! printf '%s\n' "$card" >|"$temporary_file" ||
       ! mv -f -- "$temporary_file" "$cache_file" 2>/dev/null; then
       rm -f -- "$temporary_file"
       return 1
