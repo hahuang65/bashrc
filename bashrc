@@ -22,7 +22,7 @@ source_dir() {
 
   for i in $pattern; do
     # Skip if file matches exclusion
-    if [[ -n "$exclude" && "$(basename "$i")" == "$exclude" ]]; then
+    if [[ -n "$exclude" && "${i##*/}" == "$exclude" ]]; then
       continue
     fi
     source_file "$i"

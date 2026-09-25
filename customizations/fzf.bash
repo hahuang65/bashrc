@@ -12,11 +12,11 @@ export FZF_CTRL_R_OPTS="
 export FZF_ALT_C_OPTS="--preview 'tree -C {}'"
 
 if [[ $OSTYPE == linux-gnu* ]]; then
-  source "/usr/share/fzf/completion.bash"
+  _bashrc_fzf_completion_file=/usr/share/fzf/completion.bash
   source "/usr/share/fzf/key-bindings.bash"
 elif [[ $OSTYPE == darwin* ]]; then
   if exists brew; then
-    source "/opt/homebrew/opt/fzf/shell/completion.bash"
+    _bashrc_fzf_completion_file=/opt/homebrew/opt/fzf/shell/completion.bash
     source "/opt/homebrew/opt/fzf/shell/key-bindings.bash"
   fi
 fi

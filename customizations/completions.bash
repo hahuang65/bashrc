@@ -1,12 +1,25 @@
 #!/usr/bin/env bash
 
+_bashrc_completion_file=
 if [[ $OSTYPE == linux-gnu* ]]; then
-  [[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
-elif [[ $OSTYPE == darwin* ]]; then
-  if exists brew; then
-    [[ $PS1 && -f "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
-  fi
+  _bashrc_completion_file=/usr/share/bash-completion/bash_completion
+elif [[ $OSTYPE == darwin* ]] && exists brew; then
+  _bashrc_completion_file=/opt/homebrew/etc/profile.d/bash_completion.sh
 fi
+
+_load_shell_completions() {
+  # Remove this handler first, so missing optional packages cannot cause retries.
+  complete -r -D 2>/dev/null || :
+  if [[ -r $_bashrc_completion_file ]]; then
+    source "$_bashrc_completion_file"
+  fi
+  # fzf must see bash-completion's handlers when it registers its wrappers.
+  if [[ -r ${_bashrc_fzf_completion_file:-} ]]; then
+    source "$_bashrc_fzf_completion_file"
+  fi
+  # Ask Bash to retry the same completion with the newly registered handlers.
+  return 124
+}
 
 # AWS completion
 if exists aws_completer; then
@@ -18,6 +31,8 @@ fi
 
 # Only if the shell is interactive
 if [[ $- == *i* ]]; then
+  complete -D -o bashdefault -o default -F _load_shell_completions
+
   # Case-insensitive completions
   bind "set completion-ignore-case on"
 
