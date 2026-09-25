@@ -62,14 +62,39 @@ _setup_wotd() {
     printf '%s' "$value"
   }
 
-  _print_wotd_card() {
-    local -n entry="$1"
-    local -r content_width=72
-    local border raw_line line line_width padding
+  _print_wotd_lines() {
+    local -r content_width="$1"
+    local -r control_characters=$'[\001-\037\177]'
+    local -a lines=("${@:2}") wrapped_lines
+    local border line line_width padding card formatted_line
+
+    # Strip controls in Bash, then wrap all lines with one fold process.
+    mapfile -t wrapped_lines < <(
+      printf '%s\n' "${lines[@]//$control_characters/}" |
+        fold -s -w "$content_width"
+    )
 
     printf -v border '%*s' "$((content_width + 2))" ''
     border=${border// /-}
+    printf -v card '+%s+\n' "$border"
 
+    for line in "${wrapped_lines[@]}"; do
+      # Character counts alone do not give terminal widths for Unicode.
+      line_width=$(wc -L <<<"$line")
+      padding=$((content_width - line_width))
+      ((padding < 0)) && padding=0
+      printf -v formatted_line '| %s%*s |\n' "$line" "$padding" ''
+      card+=$formatted_line
+    done
+
+    printf -v formatted_line '+%s+\n' "$border"
+    card+=$formatted_line
+    printf '%s' "$card"
+  }
+
+  _print_wotd_card() {
+    local -n entry="$1"
+    local -r content_width=72
     local -a lines=(
       '__        __      ____       _______      _____'
       '\ \      / /     / __ \     |__   __|    |  __ \'
@@ -87,24 +112,7 @@ _setup_wotd() {
       lines+=("📖 Definitions: ${entry[definition]}")
     fi
 
-    printf '+%s+\n' "$border"
-
-    for raw_line in "${lines[@]}"; do
-      raw_line="$(
-        printf '%s' "$raw_line" |
-          LC_ALL=C tr -d '\000-\037\177'
-      )"
-
-      while IFS= read -r line; do
-        line_width=$(printf '%s' "$line" | wc -L)
-        padding=$((content_width - line_width))
-        ((padding < 0)) && padding=0
-
-        printf '| %s%*s |\n' "$line" "$padding" ''
-      done < <(printf '%s\n' "$raw_line" | fold -s -w "$content_width")
-    done
-
-    printf '+%s+\n' "$border"
+    _print_wotd_lines "$content_width" "${lines[@]}"
   }
 
   wotd() {
