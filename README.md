@@ -19,7 +19,16 @@ That first request includes the loading cost, but does not require an extra Tab 
 Bash completion loads before fzf completion so their handlers work together.
 Fzf key bindings, AWS completion, and the custom Git completion are available immediately.
 
-Run shell regression tests with Bash.
+`customizations/worktree.bash` loads the AI installer's `~/.local/share/ai-config/bash/wt.bash` fragment in new shells.
+It sources the fragment only when it is readable and `~/.local/bin/wt` is executable.
+The loader uses Bash built-ins and does not run WT during startup.
+Missing files are silently ignored, and existing command behavior stays unchanged.
+The fragment supplies both `wt` and `worktree` functions for directory switching.
+The AI installer owns the fragment link, while this repository owns the startup loader.
+Login shells load it through the existing `.bash_profile` → `.bashrc` path.
+Existing shells need to source the fragment after installation to enable the functions.
+
+Run shell regression tests with Bash, including `bash tests/test_startup.sh` for startup order and the guarded WT loader.
 Run `python3 tests/test_completions.py` for the interactive completion tests, including both editing modes.
 The tests that use installed completion packages are skipped when those optional packages are absent.
 
