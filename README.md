@@ -18,6 +18,9 @@ The shared completion libraries load when a command first needs them.
 That first request includes the loading cost, but does not require an extra Tab press.
 Bash completion loads before fzf completion so their handlers work together.
 Fzf key bindings, AWS completion, and the custom Git completion are available immediately.
+The fzf Alt+C directory picker hides dot-directories except `.config`.
+It also skips `node_modules`, `__pycache__`, and directories named `cache` or `caches` (case-insensitive).
+The filter prunes these directories and their contents without changing Ctrl+T or Ctrl+R.
 
 `customizations/worktree.bash` loads the AI installer's `~/.local/share/ai-config/bash/wt.bash` fragment in new shells.
 It sources the fragment only when it is readable and `~/.local/bin/wt` is executable.
@@ -30,6 +33,7 @@ Existing shells need to source the fragment after installation to enable the fun
 
 Run shell regression tests with Bash, including `bash tests/test_startup.sh` for startup order and the guarded WT loader.
 Run `python3 tests/test_completions.py` for the interactive completion tests, including both editing modes.
+Run `python3 tests/test_fzf.py` for Alt+C directory filtering.
 The tests that use installed completion packages are skipped when those optional packages are absent.
 
 ## Word of the Day cache

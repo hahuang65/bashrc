@@ -9,6 +9,11 @@ export FZF_CTRL_R_OPTS="
   --bind 'ctrl-/:toggle-preview'
   --color header:italic"
 
+# Keep .config searchable, but do not descend into other hidden directories or clutter.
+export FZF_ALT_C_COMMAND="find -L . -type d \( \
+  -name '.*' ! -name . ! -name .config -o \
+  -name node_modules -o -name __pycache__ -o -iname cache -o -iname caches \
+  \) -prune -o -type d ! -name . -print 2>/dev/null"
 export FZF_ALT_C_OPTS="--preview 'tree -C {}'"
 
 if [[ $OSTYPE == linux-gnu* ]]; then
