@@ -9,11 +9,53 @@ export FZF_CTRL_R_OPTS="
   --bind 'ctrl-/:toggle-preview'
   --color header:italic"
 
-# Keep .config searchable, but do not descend into other hidden directories or clutter.
-export FZF_ALT_C_COMMAND="find -L . -type d \( \
-  -name '.*' ! -name . ! -name .config -o \
-  -name node_modules -o -name __pycache__ -o -iname cache -o -iname caches \
-  \) -prune -o -type d ! -name . -print 2>/dev/null"
+# Track physical targets so aliases cannot bypass the Library limits.
+_bashrc_fzf_walk() {
+  local path=$1 physical=$2 depth=$3 ancestors=$4 child target name
+  [[ -d $path && -r $path && -x $path ]] || return 0
+  name=${path##*/}
+  case "$name" in
+    .|.config|.dotfiles) ;;
+    .*|Hoth|node_modules|__pycache__) return 0 ;;
+    [cC][aA][cC][hH][eE]|[cC][aA][cC][hH][eE][sS]) return 0 ;;
+  esac
+  case "$physical/" in
+    "$support/") (( depth == 0 )) || depth=1 ;;
+    "$support/"*)
+      [[ ${physical#"$support/"} != */* ]] || return 0
+      depth=0 ;;
+    "$library/") ;;
+    "$library/"*) return 0 ;;
+  esac
+  case "$ancestors" in *"$newline$physical$newline"*) return 0 ;; esac
+  [[ $path == . ]] || printf '%s\n' "$path"
+  (( depth == 0 )) && return 0
+  ancestors+="$physical$newline"
+  if [[ $physical == "$library" ]]; then
+    _bashrc_fzf_walk "$path/Application Support" "$support" 1 "$ancestors"
+  else
+    for child in "$path"/*; do
+      [[ -d $child ]] || continue
+      target="${physical%/}/${child##*/}"
+      if [[ -L $child ]]; then
+        target=$(CDPATH= cd -- "$child" 2>/dev/null && pwd -P) || continue
+      fi
+      _bashrc_fzf_walk "$child" "$target" "$((depth - 1))" "$ancestors"
+    done
+  fi
+  return 0
+}
+
+_bashrc_fzf_directory_candidates() (
+  shopt -s dotglob nullglob
+  local library support newline=$'\n'
+  # A non-directory sentinel keeps absent Library paths from matching candidates.
+  library=$(CDPATH= cd -- "$HOME/Library" 2>/dev/null && pwd -P) || library=/dev/null
+  support=$(CDPATH= cd -- "$HOME/Library/Application Support" 2>/dev/null && pwd -P) || support=/dev/null
+  _bashrc_fzf_walk . "$(pwd -P)" -1 "$newline"
+)
+export -f _bashrc_fzf_walk _bashrc_fzf_directory_candidates
+export FZF_ALT_C_COMMAND='bash -c _bashrc_fzf_directory_candidates'
 export FZF_ALT_C_OPTS="--preview 'tree -C {}'"
 
 if [[ $OSTYPE == linux-gnu* ]]; then

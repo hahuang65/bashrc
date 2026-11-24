@@ -18,7 +18,12 @@ The shared completion libraries load when a command first needs them.
 That first request includes the loading cost, but does not require an extra Tab press.
 Bash completion loads before fzf completion so their handlers work together.
 Fzf key bindings, AWS completion, and the custom Git completion are available immediately.
-The fzf Alt+C directory picker hides dot-directories except `.config`.
+The fzf Alt+C directory picker fuzzy-matches the full path.
+It hides dot-directories except `.config` and `.dotfiles`.
+Directories named `Hoth` and their contents are excluded from traversal.
+Within `~/Library`, only `Application Support` and its immediate child directories are listed.
+Other Library contents and deeper application data are not traversed.
+This limit also applies when starting inside Library or following symlinks to it or its descendants.
 It also skips `node_modules`, `__pycache__`, and directories named `cache` or `caches` (case-insensitive).
 The filter prunes these directories and their contents without changing Ctrl+T or Ctrl+R.
 
