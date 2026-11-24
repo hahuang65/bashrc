@@ -43,9 +43,8 @@ The tests that use installed completion packages are skipped when those optional
 
 ## Word of the Day cache
 
-On a new terminal, the card prints after the other startup and prompt hooks, immediately before the first prompt.
-This avoids leaving an empty row after the card while the terminal window is still resizing.
-The card still appears only once per terminal; manual `wotd` calls are unchanged.
+Shell startup does not display a Word of the Day card.
+Run `wotd` manually to display it.
 
 `wotd` saves the complete card in `${TMPDIR:-/tmp}/wotd-$UID/YYYY-MM-DD-feed.txt`.
 When `DICTIONARY_API_TOKEN` is set, it uses a separate `YYYY-MM-DD-dictionary.txt` file.
